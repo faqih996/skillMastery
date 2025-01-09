@@ -20,9 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
         'occupation',
         'photo',
+        'password',
     ];
 
     /**
@@ -51,5 +51,21 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'user_id');
+    }
+
+    public function getActiveSubscription()
+    {
+        return $this->transactions()
+        ->where('is_paid', true)
+        ->where('ended_at', '>=', now())
+        ->first();
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->transactions()
+        ->where('is_paid', true)
+        ->where('ended_at', '>=', now())
+        ->exists();
     }
 }
